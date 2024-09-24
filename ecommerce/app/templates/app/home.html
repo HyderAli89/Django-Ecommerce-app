@@ -1,0 +1,126 @@
+{% extends "app/base.html" %} {% load static %}
+{% block title %}Home{% endblock title %}
+{% block banner-slider %}
+
+
+<div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-inner">
+    <div class="carousel-item active" data-bs-interval="3000">
+      <img src="{% static 'app/images/banner/b1.jpg' %}" class="d-block w-100" alt="Banner Images" />
+    </div>
+    <div class="carousel-item" data-bs-interval="3000">
+      <img src="{% static 'app/images/banner/b2.jpg' %}" class="d-block w-100" alt="Banner Images" />
+    </div>
+    <div class="carousel-item" data-bs-interval="3000">
+      <img src="{% static 'app/images/banner/b3.jpg' %}" class="d-block w-100" alt="Banner Images" />
+    </div>
+    <div class="carousel-item" data-bs-interval="3000">
+        <img src="{% static 'app/images/banner/b4.jpg' %}" class="d-block w-100" alt="Banner Images" />
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Previous</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="visually-hidden">Next</span>
+  </button>
+</div>
+{% endblock banner-slider %} 
+
+{% block information %}
+<div class="container">
+    <div class="row bg-success text-center p-5 text-white border-bottom shadow">
+      <h1>Products</h1>
+      <small class="fs-5">Dodla offers a wide range of products in both liquid milk and by-product categories. The liquid milk comprises of 5 types of variants and the by-product comprises of 14 types of variants.
+  
+  Dodla offers a wide range of milk products comprising of Fresh Milk, Butter, Ghee, Paneer, Curd, Flavoured Milk, Doodh Peda, Ice Cream and Skimmed Milk Powder.</small>
+    </div>
+  </div>
+  
+{% endblock information %}
+
+{% block main-content %}
+
+<div class="container">
+    <br/>
+    <h2 class="text-center">Dairy Products</h2>
+    <br>
+    <div class="row container">
+        <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
+            <div class="goodnesssec buttermilk smbg">
+                <a href="{% url 'category' 'GH' %}">
+                    <div class="goodnessseccont text-center">
+                        <img src="{% static 'app/images/product/buffalo-ghee.png' %}" class="img-responsive center-block product-img" alt="">
+                        <p class="mlkpro">Ghee</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
+            <div class="goodnesssec buttermilk curdbgpro">
+                <a href="{% url 'category' 'CR' %}">
+                    <div class="goodnessseccont text-center">
+                        <img src="{% static 'app/images/product/curd-total.png' %}" class="img-responsive center-block product-img" alt="">
+                        <p class="mlkpro">Curd</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
+            <div class="goodnesssec buttermilk">
+                <a href="{% url 'category' 'IC' %}">
+                    <div class="goodnessseccont text-center">
+                        <img src="{% static 'app/images/product/kulfi.png' %}" class="img-responsive center-block product-img" alt="">
+                        <p class="mlkpro">Ice Cream</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+    <br/>
+
+    <div class="row container">
+        <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
+            <div class="goodnesssec buttermilk smbg">
+                <a href="{% url 'category' 'MS' %}">
+                    <div class="goodnessseccont text-center">
+                        <img src="{% static 'app/images/product/milk-shake-chocolate.png' %}" class="img-responsive center-block product-img" alt="">
+                        <p class="mlkpro">MilkShake</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
+            <div class="goodnesssec buttermilk curdbgpro">
+                <a href="{% url 'category' 'ML' %}">
+                    <div class="goodnessseccont text-center">
+                        <img src="{% static 'app/images/product/cow-milk.png' %}" class="img-responsive center-block product-img" alt="">
+                        <p class="mlkpro">Milk</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <div class="col-md-4 col-sm-4 mi-go wow fadeInUp" data-wow-duration="1s" data-wow-delay="0.6s">
+            <div class="goodnesssec buttermilk">
+                <a href="{% url 'category' 'IC' %}">
+                    <div class="goodnessseccont text-center">
+                        <img src="{% static 'app/images/product/icbars.png' %}" class="img-responsive center-block product-img" alt="">
+                        <p class="mlkpro">Icebars</p>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<br><br>
+
+{% comment %} </div> {% endcomment %}
+
+{% endblock main-content%}
