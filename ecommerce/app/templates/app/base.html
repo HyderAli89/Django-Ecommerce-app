@@ -16,7 +16,7 @@
 </head>
 <body>
 
-    <nav class="navbar navbar-expand-lg bg-success navbar-dark">
+    <nav class="navbar navbar-expand-lg bg-success navbar-dark ">
         <div class="container-fluid">
           <a class="navbar-brand" href="#">
             <img src="{% static 'app/images/product/neel.png' %}" width="70" height="50"/>
@@ -26,6 +26,7 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              {% if request.user.is_authenticated %}
               <li class="nav-item">
                 <a class="nav-link active" aria-current="page" href="/">Home</a>
               </li>
@@ -62,10 +63,14 @@
             <li class="nav-item dropdown mx-2">
                 <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropdown" role="button" data-bs-toggle= "dropdown" aria-expanded="false"> HyderAli</a>
                 <ul class="dropdown-menu" aria aria-labelledby="profileDropdown">
-                    <li><a href="#" class="dropdown-item">Profile</a></li>
+                    <li><a href="{% url 'profile' %}" class="dropdown-item">Profile</a></li>
                     <li><a href="#" class="dropdown-item">Orders</a></li>
-                    <li><a href="#" class="dropdown-item">Change Password</a></li>
-                    <li><a href="#" class="dropdown-item">Logout</a></li>
+                    <li><a href="{% url 'changepassword' %}" class="dropdown-item">Change Password</a></li>
+                    <form method="POST" action="{% url 'logout' %}">
+                      {% csrf_token %}
+                      <button type="submit">Logout</button>
+                  </form>
+                  
                 </ul>
             </li>
             <li class="nav-item mx-2">
@@ -74,12 +79,14 @@
             <li class="nav-item mx-2">
                 <a href="#" class="nav-link text-white">WisList 4</a>
             </li>
+            {% else %}
             <li class="nav-item mx-2">
-                <a href="#" class="nav-link text-white">login</a>
+                <a href="{% url 'login' %}" class="nav-link text-white">login</a>
             </li>
             <li class="nav-item mx-2">
-                <a href="#" class="nav-link text-white">Registration</a>
+                <a href="{% url 'customerregistration' %}" class="nav-link text-white">Registration</a>
             </li>
+            {% endif %}
           </ul>
 
         </div>
@@ -89,7 +96,7 @@
     {% block information %}{% endblock information %}
      {% block main-content %}{% endblock main-content %}
 
-     <footer class="container-fluid bg-success fixed-bottom text-center p-2 mt-5 ">
+     <footer class="container-fluid bg-success fixed-bottom text-center p-2  ">
         Copyright :2024 || developed by : HyderAli
      </footer>
 
@@ -102,8 +109,8 @@
 
 
     {% comment %} ALl js file {% endcomment %}
-    <script script="{% static 'app/js/owl.carousel.min.js' %}"></script>
-    <script script="{% static 'app/js/all.min.js' %}"></script>
-    <script script="{% static 'app/js/myscript.js' %}"></script>
+    <script src="{% static 'app/js/owl.carousel.min.js' %}"></script>
+    <script src="{% static 'app/js/all.min.js' %}"></script>
+    <script src="{% static 'app/js/myscript.js' %}"></script>
 </body>
 </html>
