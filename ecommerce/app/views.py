@@ -1,9 +1,9 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from urllib import request
-from django.http import HttpResponse
-from . models import Customer, Product,Cart
-from django.db.models import Count
+from django.http import HttpResponse,JsonResponse
+from . models import Customer, Product,Cart,Payment,OrderPlaced
+from django.db.models import Count,Q
 from . forms import CustomerProfileForm, CustomerRegistrationForm
 from django.contrib import messages 
 # Create your views here.
@@ -111,3 +111,198 @@ def show_cart(request):
     totalamount=amount + 40
     
     return render (request, 'app/addtocart.html',locals())
+
+def orders(request):
+    
+     order_id=request.GET.get('order_id')
+     cust_id=request.GET.get('cust_id')
+     #print("payment done: oid",order_id," pid,payment_id," cid",cust_id)
+     user = request.user
+     #return redirect("orders")
+    #  customer=Customer.objects.get(id=cust_id) #To update payment status and payment id payment-Payment.objects.get(razorpay_order_id-order_id)
+
+     #To save order details
+     cart=Cart.objects.filter(user=user)
+     for c in cart:
+         OrderPlaced(user=user, product=c.product, quantity=c.quantity).save()
+        #c.delete()
+     order_placed=OrderPlaced.objects.filter(user=user)
+     return render(request,"app/orders.html",locals())
+
+class checkout(View):
+    def get(self,request):
+        user=request.user
+        # add=Customer.objects.filter(user=user)
+        cart_items=Cart.objects.filter(user=user)
+       
+        famount=0
+        for p in cart_items:
+            value = p.quantity*p.product.discounted_price
+            famount = famount + value
+        totalamount= famount +  40
+        payment= Payment(
+        user=user,
+        amount=totalamount,
+        )
+        payment.save()  
+       
+       
+       # for order placed
+        
+        
+        # user = request.user
+        # #return redirect("orders")
+        # customer=Customer.objects.get(user=user) #To update payment status and payment id payment-Payment.objects.get(razorpay_order_id-order_id)
+        # Payment.save()
+        # #To save order details
+        # cart=Cart.objects.filter(user=user)
+        # for c in cart:
+        #     OrderPlaced(user=user, customer=customer[0], product=cart_items, quantity=c.quantity).save()
+        # c.delete()
+        
+        return render(request, 'app/checkout.html',locals())
+
+def status(request):
+    return render(request,"app/status.html")
+
+def payment_done(request):
+     order_id=request.GET.get('order_id')
+     cust_id=request.GET.get('cust_id')
+     #print("payment done: oid",order_id," pid,payment_id," cid",cust_id)
+     user = request.user
+     #return redirect("orders")
+     customer=Customer.objects.get(id=cust_id) #To update payment status and payment id payment-Payment.objects.get(razorpay_order_id-order_id)
+     Payment.save()
+     #To save order details
+     cart=Cart.objects.filter(user=user)
+     for c in cart:
+         OrderPlaced(user=user, customer=customer, product=c.product, quantity=c.quantity).save()
+     c.delete()
+     return redirect("orders")
+
+
+def plus_cart(request):
+    #   if request.method == 'GET':
+    #       prod_id = request.GET.get('prod_id')
+    #       c=Cart.objects.filter(Q(product=prod_id) &Q(user=request.user))  # Q is required for multiple condition
+    #       c.quantity+=1
+    #       c.save() # Saving the cart
+          
+    #       # again getting data of cart objects
+    #       user = request.user
+    #       cart = Cart.objects.filter(user=user)
+    #       amount = 0 
+    #       for p in cart:
+    #          value= p.quantity*p.product.discounted_price
+    #          amount=amount + value
+    #       totalamount=amount + 40
+    
+    #       data={
+    #           'quantity':c.quantity,
+    #           'amount':amount,
+    #           'totalamount': totalamount            
+    #       }
+    #       return JsonResponse(data)
+    
+    
+    if request.method == 'GET':
+        prod_id = request.GET.get('prod_id')  # Use get() to avoid KeyError if prod_id is missing
+        if prod_id:
+            try:
+                # Use filter() instead of get() to handle multiple objects
+                cart_items = Cart.objects.filter(Q(product=prod_id) & Q(user=request.user))
+                if cart_items.exists():
+                    # If multiple cart entries exist, decide how to handle them (e.g., take the first or merge quantities)
+                    c = cart_items.first()  # Get the first cart entry (can modify to handle multiple if needed)
+                    c.quantity += 1
+                    c.save()  # Save the updated cart item
+    
+                    # Recalculate the total amount for the cart
+                    user = request.user
+                    cart = Cart.objects.filter(user=user)
+                    amount = 0 
+                    for p in cart:
+                        value = p.quantity * p.product.discounted_price
+                        amount += value
+                    totalamount = amount + 40  # Shipping cost or fixed charge
+    
+                    data = {
+                        'quantity': c.quantity,
+                        'amount': amount,
+                        'totalamount': totalamount
+                    }
+                    return JsonResponse(data)
+                else:
+                    return JsonResponse({'error': 'Cart entry not found'}, status=404)
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=500)
+        else:
+            return JsonResponse({'error': 'prod_id missing in GET parameters'}, status=400)
+
+def minus_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET.get('prod_id')  # Use get() to avoid KeyError if prod_id is missing
+        if prod_id:
+            try:
+                # Use filter() instead of get() to handle multiple objects
+                cart_items = Cart.objects.filter(Q(product=prod_id) & Q(user=request.user))
+                if cart_items.exists():
+                    # If multiple cart entries exist, decide how to handle them (e.g., take the first or merge quantities)
+                    c = cart_items.first()  # Get the first cart entry (can modify to handle multiple if needed)
+                    c.quantity -= 1
+                    c.save()  # Save the updated cart item
+    
+                    # Recalculate the total amount for the cart
+                    user = request.user
+                    cart = Cart.objects.filter(user=user)
+                    amount = 0 
+                    for p in cart:
+                        value = p.quantity * p.product.discounted_price
+                        amount += value
+                    totalamount = amount + 40  # Shipping cost or fixed charge
+    
+                    data = {
+                        'quantity':c.quantity,
+                        'amount': amount,
+                        'totalamount': totalamount
+                    }
+                    return JsonResponse(data)
+                else:
+                    return JsonResponse({'error': 'Cart entry not found'}, status=404)
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=500)
+        else:
+            return JsonResponse({'error': 'prod_id missing in GET parameters'}, status=400)
+
+def remove_cart(request):
+    if request.method == 'GET':
+        prod_id = request.GET.get('prod_id')
+        if prod_id:
+            try:
+                # Filter by the product and user
+                cart_items = Cart.objects.filter(Q(product=prod_id) & Q(user=request.user))
+                if cart_items.exists():
+                    # Delete the item(s) from the cart
+                    cart_items.delete()
+
+                    # Recalculate the total amount for the cart
+                    user = request.user
+                    cart = Cart.objects.filter(user=user)
+                    amount = 0
+                    for p in cart:
+                        value = p.quantity * p.product.discounted_price
+                        amount += value
+                    totalamount = amount + 40  # Assuming 40 is the shipping cost or fixed charge
+
+                    data = {
+                        'amount': amount,
+                        'totalamount': totalamount
+                    }
+                    return JsonResponse(data)
+                else:
+                    return JsonResponse({'error': 'Cart entry not found'}, status=404)
+            except Exception as e:
+                return JsonResponse({'error': str(e)}, status=500)
+        else:
+            return JsonResponse({'error': 'prod_id missing in GET parameters'}, status=400)
+

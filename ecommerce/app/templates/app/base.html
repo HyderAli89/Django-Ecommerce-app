@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'app/css/owl.carousel.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/all.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}"/>
-
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     <title>Dairy Product | {% block title %}{% endblock title %}</title>
 </head>
 <body>
@@ -64,7 +64,7 @@
                 <a class="nav-link dropdown-toggle text-white" href="#" id="profileDropdown" role="button" data-bs-toggle= "dropdown" aria-expanded="false"> HyderAli</a>
                 <ul class="dropdown-menu" aria aria-labelledby="profileDropdown">
                     <li><a href="{% url 'profile' %}" class="dropdown-item">Profile</a></li>
-                    <li><a href="#" class="dropdown-item">Orders</a></li>
+                    <li><a href="{% url 'orders' %}" class="dropdown-item">Orders</a></li>
                     <li><a href="{% url 'changepassword' %}" class="dropdown-item">Change Password</a></li>
                     <form method="POST" action="{% url 'logout' %}">
                       {% csrf_token %}
@@ -74,7 +74,7 @@
                 </ul>
             </li>
             <li class="nav-item mx-2">
-                <a href="#" class="nav-link text-white">Cart 4</a>
+                <a href="{% url 'showcart' %}" class="nav-link text-white">Cart 4</a>
             </li>
             <li class="nav-item mx-2">
                 <a href="#" class="nav-link text-white">WisList 4</a>
@@ -95,6 +95,7 @@
     {% block banner-slider %}{% endblock banner-slider %}
     {% block information %}{% endblock information %}
      {% block main-content %}{% endblock main-content %}
+
 
      <footer class="container-fluid bg-success fixed-bottom text-center p-2  ">
         Copyright :2024 || developed by : HyderAli
