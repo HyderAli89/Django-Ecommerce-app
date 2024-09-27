@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="{% static 'app/css/owl.carousel.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/all.min.css' %}"/>
     <link rel="stylesheet" href="{% static 'app/css/style.css' %}"/>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    {% comment %} <script src="https://checkout.razorpay.com/v1/checkout.js"></script> {% endcomment %}
     <title>Dairy Product | {% block title %}{% endblock title %}</title>
 </head>
 <body>
@@ -53,9 +53,9 @@
                 <a class="nav-link text-white" href="{% url 'contact' %}">Contact Us</a>
               </li>
             </ul>
-            <form class="d-flex" role="search">
-              <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success" type="submit">Search</button>
+            <form class="d-flex" role="search" action="search">
+              <input class="form-control me-2" type="search" name="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-warning text-white" type="submit">Search</button>
             </form>
           </div>
 
@@ -74,11 +74,13 @@
                 </ul>
             </li>
             <li class="nav-item mx-2">
-                <a href="{% url 'showcart' %}" class="nav-link text-white">Cart 4</a>
+                <a href="{% url 'showcart' %}" class="nav-link text-white"> 
+
+                  Cart </a>
             </li>
             <li class="nav-item mx-2">
-                <a href="#" class="nav-link text-white">WisList 4</a>
-            </li>
+                <a href="{% url 'showwishlist' %}" class="nav-link text-white"><i class="fa fa-heart"></i></a>
+            </li> 
             {% else %}
             <li class="nav-item mx-2">
                 <a href="{% url 'login' %}" class="nav-link text-white">login</a>

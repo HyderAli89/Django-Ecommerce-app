@@ -102,7 +102,7 @@ $('.plus-wishlist').click(function(){
         },
         success:function(data){
             //alert(data.message)
-            window.location.href = `http://localhost:8000/product-detail/${id}`
+            window.location.href = `http://localhost:8000/product-detail/${id}`  // redirecting to  product page
         }
     })
 })

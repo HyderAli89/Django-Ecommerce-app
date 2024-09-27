@@ -4,6 +4,9 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.contrib.auth import views as auth_view
 from . forms import LoginForm, MyPasswordChangeForm
+from django.contrib import admin
+
+
 urlpatterns = [
     path("",views.home),
     path('about/',views.about,name="about"),
@@ -23,12 +26,15 @@ urlpatterns = [
     path("orders/", views.orders, name="orders"),
     path("shop/", views.home),
    
+    # wishlist
+    path('wishlist',views.show_wishlist,name='showwishlist'),
+    path('pluswishlist/',views.plus_wishlist),
+    path('minuswishlist/',views.minus_wishlist),
     
     path("pluscart/",views.plus_cart),
     path('minuscart/',views.minus_cart),
     path('removecart/',views.remove_cart),
-
-
+    path('search/',views.search,name="search"),
 
     # user authentication 
     path('customerregistration/',views.CustomerRegistrationView.as_view(),name="customerregistration"),
@@ -39,3 +45,8 @@ urlpatterns = [
     path('logout/',auth_view.LogoutView.as_view(next_page='login'),name='logout'),
     
 ]+static(settings.MEDIA_URL , document_root=settings.MEDIA_ROOT)  # to access media/images folder
+
+
+admin.site.site_header = "NEEL DAIRY"
+admin.site.site_title = "NEEL DAIRY"
+admin.site.site_index_title = "WELCOME TO  NEEL DAIRY AN E-COMMERCE SHOP" 

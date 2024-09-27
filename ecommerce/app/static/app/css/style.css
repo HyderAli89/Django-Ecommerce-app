@@ -67,7 +67,8 @@
 }
 
 .goodnessseccont img{
-    width:100%;
+    width: 330px;
+    height: 300px;
 }
 
 .mlkpro{
@@ -78,7 +79,6 @@
     width:43%;
     margin:0 auto;
     text-align:center;
-    
 }
 
 .goodnesssec a{
@@ -86,6 +86,10 @@
 }
 .product-img {
     width: 100%; 
+    height: 200%;
     height: 23  0px; 
-    /* object-fit: cover;  */
+    /* object-fit: cover; */
+    border-radius: 5px; 
 }
+
+

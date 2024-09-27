@@ -1,37 +1,56 @@
 from django.shortcuts import render,redirect
 from django.views import View
 from urllib import request
+from django.contrib.auth.models import AnonymousUser
 from django.http import HttpResponse,JsonResponse
-from . models import Customer, Product,Cart,Payment,OrderPlaced
+from . models import Customer, Product,Cart,Payment,OrderPlaced,Wishlist
 from django.db.models import Count,Q
 from . forms import CustomerProfileForm, CustomerRegistrationForm
 from django.contrib import messages 
+from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 # Create your views here.
+
+@login_required
 def home(request):
-    return render(request,"app/home.html")
+    return render(request,"app/home.html",locals())
+
+@login_required
 def about(request):
-    return render(request,"app/about.html")
+    return render(request,"app/about.html",locals()) 
+
+@login_required
 def contact(request):
     return render(request,"app/contact.html")
 
+@method_decorator(login_required,name='dispatch')
 class CategoryView(View):
     def get(self,request,val):
         product= Product.objects.filter(category=val)
         title=Product.objects.filter(category=val).values('title')
         return render(request,"app/category.html",locals()) # locals is built in function to pass the value from request to html file
-
+    
+@method_decorator(login_required,name='dispatch')
 class CategoryTitle(View):
     def get(self,request,val):
         product= Product.objects.filter(title=val)
         title=Product.objects.filter(category=product[0].category).values('title')
         return render(request,"app/category.html",locals())
-
+    
+@method_decorator(login_required,name='dispatch')
 class ProductDetails(View):
-    def get(self,request,pk):
-        product= Product.objects.get(pk=pk)
-        return render(request,"app/productdetail.html",locals())
+    def get(self, request, pk):
+        product = Product.objects.get(pk=pk)
+
+        if request.user.is_authenticated:
+            wishlist = Wishlist.objects.filter(Q(product=product) & Q(user=request.user))
+        else:
+            wishlist = None 
+       
+        return render(request, "app/productdetail.html", locals())
 
 # customer registration views
+# @method_decorator(login_required,name='dispatch')  if we write this then new user canot register himself
 class CustomerRegistrationView(View):
     def get(self,request):
         form= CustomerRegistrationForm()
@@ -44,7 +63,8 @@ class CustomerRegistrationView(View):
         else:
             messages.warning(request,"Invalid Input Data") 
         return render(request, 'app/customerregistration.html',locals())
-
+    
+@method_decorator(login_required,name='dispatch')
 class ProfileView(View):
     # after login it will redirect it to login page
     def get(self,request):
@@ -69,10 +89,12 @@ class ProfileView(View):
             messages.warning(request,"invalid Input Data")
         return render(request,'app/profile.html',locals())
     
+@login_required
 def address(request):
     add= Customer.objects.filter(user=request.user)
     return render(request, 'app/address.html',locals())
 
+@method_decorator(login_required,name='dispatch')
 class updateAddress(View):
     def get(self,request,pk):
         add=Customer.objects.get(pk=pk) # when we click on update the data will be fetch here 
@@ -94,6 +116,7 @@ class updateAddress(View):
             messages.warning(request,"Invalid Input Data")
         return redirect("address")
     
+@login_required   
 def add_to_cart(request):
     user=request.user
     product_id=request.GET.get("prod_id")
@@ -101,6 +124,7 @@ def add_to_cart(request):
     Cart(user=user,product=product).save()
     return redirect("/cart")
 
+@login_required
 def show_cart(request):
     user = request.user 
     cart=Cart.objects.filter(user=user)
@@ -112,6 +136,8 @@ def show_cart(request):
     
     return render (request, 'app/addtocart.html',locals())
 
+
+@login_required
 def orders(request):
     
      order_id=request.GET.get('order_id')
@@ -128,7 +154,15 @@ def orders(request):
         #c.delete()
      order_placed=OrderPlaced.objects.filter(user=user)
      return render(request,"app/orders.html",locals())
+ 
+ 
+@login_required
+def show_wishlist(request):
 
+    product=Wishlist.objects.filter(user=request.user)
+    return render(request,"app/wishlist.html",locals())
+ 
+@method_decorator(login_required,name='dispatch')
 class checkout(View):
     def get(self,request):
         user=request.user
@@ -161,10 +195,12 @@ class checkout(View):
         # c.delete()
         
         return render(request, 'app/checkout.html',locals())
-
+    
+@login_required
 def status(request):
     return render(request,"app/status.html")
 
+@login_required
 def payment_done(request):
      order_id=request.GET.get('order_id')
      cust_id=request.GET.get('cust_id')
@@ -180,7 +216,7 @@ def payment_done(request):
      c.delete()
      return redirect("orders")
 
-
+@login_required
 def plus_cart(request):
     #   if request.method == 'GET':
     #       prod_id = request.GET.get('prod_id')
@@ -238,7 +274,9 @@ def plus_cart(request):
                 return JsonResponse({'error': str(e)}, status=500)
         else:
             return JsonResponse({'error': 'prod_id missing in GET parameters'}, status=400)
-
+        
+        
+@login_required
 def minus_cart(request):
     if request.method == 'GET':
         prod_id = request.GET.get('prod_id')  # Use get() to avoid KeyError if prod_id is missing
@@ -273,7 +311,9 @@ def minus_cart(request):
                 return JsonResponse({'error': str(e)}, status=500)
         else:
             return JsonResponse({'error': 'prod_id missing in GET parameters'}, status=400)
-
+        
+        
+@login_required
 def remove_cart(request):
     if request.method == 'GET':
         prod_id = request.GET.get('prod_id')
@@ -305,4 +345,38 @@ def remove_cart(request):
                 return JsonResponse({'error': str(e)}, status=500)
         else:
             return JsonResponse({'error': 'prod_id missing in GET parameters'}, status=400)
+        
+        
+
+@login_required
+def plus_wishlist(request):
+    if request.method == 'GET':
+        prod_id=request.GET['prod_id']
+        product=Product.objects.get(id=prod_id)
+        user=request.user
+        Wishlist(user=user,product=product).save()
+        data={
+            'message':'Whislist Added Successfully'
+        }
+        return JsonResponse(data)
+    
+    
+@login_required
+def minus_wishlist(request):
+    if request.method == 'GET':
+        prod_id=request.GET['prod_id']
+        product=Product.objects.get(id=prod_id)
+        user=request.user
+        Wishlist.objects.filter(user=user,product=product).delete()
+        data={
+            'message':'Whislist Removed Successfully'
+        }
+        return JsonResponse(data)
+    
+    
+@login_required
+def search(request):
+    query= request.GET['search']
+    product=Product.objects.filter(Q(title__icontains=query))
+    return render(request,"app/search.html",locals())
 

@@ -10,10 +10,17 @@
 
                <form action="" method="post" novalidate class="shadow p-5">
                {% csrf_token %}
+               {% comment %} automatically add all the field  {% endcomment %}
                {% for fm in form %}
-                   {{fm.label_tag}} {{fm}} <small class="text-danger">{{fm.errors | striptags}}</small>
+                   {{fm.label_tag}} {{fm}} <small class="text-danger">{{fm.errors|striptags}}</small>
                     <br>
-               {% endfor %}
+               {% endfor %} 
+
+
+          
+   
+
+
                <input type="submit" value="Submit" class="btn btn-primary"> <br>
 
                <div class="text-center text-primary fw-bold">
