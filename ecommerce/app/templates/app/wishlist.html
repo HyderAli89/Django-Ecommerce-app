@@ -4,6 +4,7 @@
        <div class="row">
          <div class="col-sm-8">
            <div class="row">
+            {% if product %}
               {% for prod in product %}
              <div class="col-sm-4 text-center mb-4 hover-shadow">
                <a href="{% url 'product-detail' prod.product.id%}" class="btn">
@@ -25,6 +26,11 @@
                </a>
              </div>
              {% endfor %}
+             {% else %}
+             <div ="col-sm-8 text-center">
+                <p class="text-center text-danger" >Your Wishlist is Empty</p>  
+              </div>
+              {% endif %}
            </div>
          </div>
        </div>

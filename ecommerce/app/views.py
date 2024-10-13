@@ -151,7 +151,7 @@ def orders(request):
      cart=Cart.objects.filter(user=user)
      for c in cart:
          OrderPlaced(user=user, product=c.product, quantity=c.quantity).save()
-        #c.delete()
+         c.delete()
      order_placed=OrderPlaced.objects.filter(user=user)
      return render(request,"app/orders.html",locals())
  
@@ -180,6 +180,9 @@ class checkout(View):
         )
         payment.save()  
        
+        # for c in cart_items:
+        #     c.delete()
+           
        
        # for order placed
         
