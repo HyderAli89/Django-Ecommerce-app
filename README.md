@@ -1,4 +1,4 @@
-Dairy Ecommerce Platform
+**Dairy Ecommerce Platform**
 This is a full-featured ecommerce platform built using Django, designed for selling a variety of dairy products such as milk, cheese, yogurt, and more. The platform allows customers to browse products, add them to their cart, and securely purchase items online. It also features a robust admin panel for managing products, user data, and orders.
 
 Features
